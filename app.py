@@ -43,7 +43,7 @@ def predictBattery():
     prediction = {
         "soc": randrange(1, 100),
         "soh": randrange(1, 100),
-        "createdAt": datetime.now(),
+        "createdAt": datetime.now().isoformat(),
         "batteryId": payloadDict['batteryId'],
         "chargeCycles": payloadDict['chargeCycles'],
     }
