@@ -1,45 +1,42 @@
 from flask import Flask, request
-from helpers import response
+from helpers import response, ba3s, dataSources as ba3Sources
 from flask_cors import CORS
 from datetime import datetime
 from random import randrange
+from operator import itemgetter
 
 app = Flask(__name__)
 CORS(app)
 
-ba3s = [
-    {
-      "id": 1,
-      "name": 'Battery 1',
-      "dataSource": 'XXXXXXXXXXXXXXXXXXXX',
-      "createdAt": "2023-12-01",
-    },
-    {
-      "id": 2,
-      "name": 'Battery 2',
-      "dataSource": 'XXXXXXXXXXXXXXXXXXXX',
-      "createdAt": "2023-12-02",
-    },
-    {
-      "id": 3,
-      "name": 'Battery 3',
-      "dataSource": 'XXXXXXXXXXXXXXXXXXXX',
-      "createdAt": "2023-12-03",
-    },
-]
 
 @app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
 
+
 @app.get("/batteries")
 def batteries():
     return response(ba3s)
 
+
+@app.post("/batteries")
+def createBatteryDigitalTwin():
+    name, source = itemgetter('name', 'source')(request.json)
+    newBa3 = {
+        'id': len(ba3s) + 1,
+        'name': name,
+        'dataSource': source,
+        'createdAt': datetime.now().isoformat(),
+    }
+    ba3s.append(newBa3)
+
+    return response(newBa3)
+
+
 @app.post("/batteries/predict")
 def predictBattery():
     payloadDict = request.json
-    
+
     prediction = {
         "soc": randrange(1, 100),
         "soh": randrange(1, 100),
@@ -47,5 +44,13 @@ def predictBattery():
         "batteryId": payloadDict['batteryId'],
         "chargeCycles": payloadDict['chargeCycles'],
     }
-    
+
     return response(prediction)
+
+# physical battery data sources
+
+
+@app.get("/data-sources")
+def dataSources():
+    # print({'ba3Sources': ba3Sources})
+    return response(ba3Sources)
