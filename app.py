@@ -5,6 +5,7 @@ from datetime import datetime
 from random import randrange
 from operator import itemgetter
 import model
+import sensors
 
 app = Flask(__name__)
 CORS(app)
@@ -69,10 +70,16 @@ def getPredictions():
     return response(predictions, "Predictions fetched successfully")
 
 
-# physical battery data sources
+@app.get("/batteries/<id>/readings")
+def getReadings(id):
+    readings = sensors.getReadings(id)
 
+    return response(readings, "Readings fetched successfully")
+
+
+# physical battery data sources
 
 @app.get("/data-sources")
 def dataSources():
     # print({'ba3Sources': ba3Sources})
-    return response(ba3Sources)
+    return response(ba3Sources, "Data Sources fetched successfully")
