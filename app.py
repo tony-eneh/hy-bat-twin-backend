@@ -4,6 +4,7 @@ from flask_cors import CORS
 from datetime import datetime
 from random import randrange
 from operator import itemgetter
+import model
 
 app = Flask(__name__)
 CORS(app)
@@ -54,7 +55,19 @@ def predictBattery():
         "chargeCycles": payloadDict['chargeCycles'],
     }
 
-    return response(prediction)
+    return response(prediction, "Prediction Successful")
+
+
+@app.get("/batteries/predictions")
+def getPredictions():
+    batteryId, minChargeCycle, maxChargeCycle, step = itemgetter(
+        'batteryId', 'minChargeCycle', 'maxChargeCycle', 'step')(dict(request.args))
+
+    predictions = model.getPredictions(
+        batteryId, minChargeCycle, maxChargeCycle, step)
+
+    return response(predictions, "Predictions fetched successfully")
+
 
 # physical battery data sources
 
