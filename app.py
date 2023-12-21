@@ -26,16 +26,20 @@ def batteryById(id):
 
 @app.post("/batteries")
 def createBatteryDigitalTwin():
-    name, source = itemgetter('name', 'source')(request.json)
+    name, source, description = itemgetter(
+        'name', 'source', 'description')(request.json)
     newBa3 = {
         'id': len(ba3s) + 1,
         'name': name,
         'dataSource': source,
         'createdAt': datetime.now().isoformat(),
+        'description': description,
+        'image': batteryImage,
+        'chargeCycles': randrange(1, 67),
     }
     ba3s.append(newBa3)
 
-    return response(newBa3)
+    return response(newBa3, "Battery Created Successfully")
 
 
 @app.post("/batteries/predict")
