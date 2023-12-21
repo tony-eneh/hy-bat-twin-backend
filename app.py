@@ -16,7 +16,12 @@ def hello_world():
 
 @app.get("/batteries")
 def batteries():
-    return response(ba3s)
+    return response(ba3s, "Batteries fetch successfully")
+
+
+@app.get("/batteries/<id>")
+def batteryById(id):
+    return response(find(lambda item: item['id'] == int(id), ba3s), "Battery with id " + id + " fetched successfully!")
 
 
 @app.post("/batteries")
