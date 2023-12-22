@@ -83,3 +83,7 @@ def getReadings(id):
 def dataSources():
     # print({'ba3Sources': ba3Sources})
     return response(ba3Sources, "Data Sources fetched successfully")
+
+
+if (__name__ == '__main__'):
+    app.run()
