@@ -1,5 +1,5 @@
-from flask import Flask, request
-from helpers import response, ba3s, dataSources as ba3Sources, batteryImage, find
+from flask import Flask, request, send_from_directory
+from helpers import response, ba3s, dataSources as ba3Sources, find, preprend_host_url_to_images
 from flask_cors import CORS
 from datetime import datetime
 from random import randrange
@@ -18,12 +18,12 @@ def hello_world():
 
 @app.get("/batteries")
 def batteries():
-    return response(ba3s, "Batteries fetch successfully")
+    return response(preprend_host_url_to_images(ba3s), "Batteries fetch successfully")
 
 
 @app.get("/batteries/<id>")
 def batteryById(id):
-    return response(find(lambda item: item['id'] == int(id), ba3s), "Battery with id " + id + " fetched successfully!")
+    return response(find(lambda item: item['id'] == int(id), preprend_host_url_to_images(ba3s)), "Battery with id " + id + " fetched successfully!")
 
 
 @app.post("/batteries")
@@ -36,7 +36,7 @@ def createBatteryDigitalTwin():
         'dataSource': source,
         'createdAt': datetime.now().isoformat(),
         'description': description,
-        'image': batteryImage,
+        'image': request.root_url+'images/battery.png',
         'chargeCycles': randrange(1, 67),
     }
     ba3s.append(newBa3)
@@ -83,6 +83,12 @@ def getReadings(id):
 def dataSources():
     # print({'ba3Sources': ba3Sources})
     return response(ba3Sources, "Data Sources fetched successfully")
+
+
+# serve static images
+@app.get("/images/<path:path>")
+def sendImages(path):
+    return send_from_directory('images', path)
 
 
 if (__name__ == '__main__'):
